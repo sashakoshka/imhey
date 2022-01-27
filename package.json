@@ -10,5 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "neo-blessed": "^0.2.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sashakoshka/imhey.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sashakoshka/imhey/issues"
+  },
+  "homepage": "https://github.com/sashakoshka/imhey#readme"
 }
