@@ -1,0 +1,14 @@
+{
+  "name": "imhey",
+  "version": "1.0.0",
+  "description": "SpaceHey Instant Messanger TUI client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sasha Koshka",
+  "license": "ISC",
+  "dependencies": {
+    "neo-blessed": "^0.2.0"
+  }
+}
