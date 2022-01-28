@@ -107,6 +107,7 @@ function init (evh_) {
       right: 1
     },
     style: {
+      fg: "white",
       bg: "black"
     }
   })
@@ -127,12 +128,22 @@ function init (evh_) {
     return process.exit(0);
   })
   
-  inputBox.key (['M-up'], (ch, key) => {
+  inputBox.key (['up'], (ch, key) => {
+    selectPrev()
+  })
+  
+  inputBox.key (['down'], (ch, key) => {
     selectNext()
   })
   
-  inputBox.key (['M-down'], (ch, key) => {
-    selectPrev()
+  inputBox.key (['pageup'], (ch, key) => {
+    chatHistory.scroll(1)
+    screen.render()
+  })
+  
+  inputBox.key (['pagedown'], (ch, key) => {
+    chatHistory.scroll(-1)
+    screen.render()
   })
   
   screen.append(chatLabel)
@@ -167,6 +178,8 @@ function selectConversation (number) {
     bg: "black"
   }
 
+  conversations[selection].widget.setText(conversations[selection].name)
+
   selection = number
   
   if (selection < 0 || selection > conversations.length) selection = 0
@@ -175,6 +188,8 @@ function selectConversation (number) {
     fg: "white",
     bg: "grey"
   }
+
+  conversations[selection].widget.setText("> " + conversations[selection].name)
 
   chatLabel.setText(`User ${conversations[selection].name}`)
 
@@ -192,12 +207,15 @@ function setConversations (list) {
   conversations = []
 
   for (let i = 0; i < list.length; i++) {
+    let convData = list[i]
     let conv = blessed.box ({
       left:    0,
       top:     i,
       width:   24,
       height:  1,
-      content: list[i].user.display_name,
+      content: ((convData.unread_count) ? `(${convData.unread_count}) ` : "")
+             + ((i === selection) ? "> " : "")
+             + convData.user.display_name,
       padding: {
         left:  1,
         right: 1
@@ -244,7 +262,7 @@ function clearStatus (status) {
 function addMessage (user, content, self, time, seen) {
   if (self) user = "you"
   
-  let text = `{red-fg}[${user}]{/}: ${content.replace(/<br>/g, '\n    ')}`
+  let text = `{red-fg}[${user}]:{/} ${content.replace(/<br>/g, '\n    ')}`
   if (chatHistory.getText() === "")
     chatHistory.setContent(text)
   else
