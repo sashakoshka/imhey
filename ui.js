@@ -17,7 +17,8 @@ let screen,
     conversations
 
 let evh,
-    selection
+    selection,
+    lockInput
 
 function init (evh_) {
   evh = evh_
@@ -78,7 +79,7 @@ function init (evh_) {
       fg: "white",
       bg: "black"
     },
-    content: " > "
+    content: " >"
   })
   
   inputBox = blessed.textbox ({
@@ -118,8 +119,13 @@ function init (evh_) {
 
   inputBox.on ("action", () => {
     inputBox.focus()
-    evh.onsubmit(inputBox.getValue())
-    inputBox.clearValue()
+  })
+
+  inputBox.on ("submit", () => {
+    if (!lockInput) {
+      evh.onsubmit(inputBox.getValue())
+      inputBox.clearValue()
+    }
     screen.render()
   })
 
@@ -270,11 +276,11 @@ function clearStatus (status) {
   screen.render()
 }
 
-function addMessage (user, content, self, time, seen) {
+function addMessage (user, content, self, time, seen, clear) {
   if (self) user = "you"
   
   let text = `{red-fg}[${user}]:{/} ${content.replace(/<br>/g, '\n    ')}`
-  if (chatHistory.getText() === "")
+  if (chatHistory.getText() === "" || clear)
     chatHistory.setContent(text)
   else
     chatHistory.insertBottom(text)
@@ -282,12 +288,26 @@ function addMessage (user, content, self, time, seen) {
   chatHistory.scrollTo(chatHistory.getScrollHeight())
 }
 
-function clearMessages () {
-  chatHistory.setContent("")
-}
-
 function forceRefresh () {
   screen.render()
+}
+
+function countDown (count) {
+  lockInput = true
+  let countInterval = setInterval (() => {
+    if (count === 0) {
+      clearInterval(countInterval)
+      inputPrompt.setText(" >")
+      lockInput = false
+      screen.render()
+      return
+    }
+
+    inputPrompt.setText(` ${count}`)
+    screen.render()
+    
+    count--
+  }, 1000)
 }
 
 module.exports = {
@@ -297,6 +317,6 @@ module.exports = {
   setStatus,
   clearStatus,
   addMessage,
-  clearMessages,
-  forceRefresh
+  forceRefresh,
+  countDown
 }

@@ -50,11 +50,12 @@ ui.init ({
   onselect: (item) => {
     selection = item
     ui.setStatus("Loading...")
-    refreshMessages(ui.clearStatus)
+    refreshMessages(ui.clearStatus, true)
   },
   onsubmit: (message) => {
     ui.setStatus("Sending...")
     send(message)
+    ui.countDown(20)
   }
 })
 
@@ -108,17 +109,18 @@ function refreshConvos (callback) {
   })
 }
 
-function refreshMessages (callback) {
+function refreshMessages (callback, clear) {
   shim.getMessages (conversations[selection].user.id, (data) => {
-    ui.clearMessages()
     for (const message of data.data.messages) {
       ui.addMessage (
         conversations[selection].user.display_name,
         message.content,
         message.self,
         message.time,
-        message.seen
+        message.seen,
+        clear
       )
+      clear = false
     }
     callback()
   }, (err) => {
