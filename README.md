@@ -1,5 +1,7 @@
 # imhey
 
+![imhey screenshot](preview.png)
+
 SpaceHey has a very wierd "instant messanger" built into it. I got really
 curious and decided to figure out how it worked. Long story short I reverse
 engineered the api a bit, and made an alternative client.
