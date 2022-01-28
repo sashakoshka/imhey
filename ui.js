@@ -152,6 +152,10 @@ function init (evh_) {
     screen.render()
   })
   
+  inputBox.key (['C-r'], (ch, key) => {
+    evh.onrefresh()
+  })
+  
   screen.append(chatLabel)
   screen.append(chatListLabel)
   screen.append(chatList)

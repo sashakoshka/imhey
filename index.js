@@ -60,6 +60,16 @@ ui.init ({
     ui.setStatus("Sending...")
     send(message)
     ui.countDown(20)
+  },
+  onrefresh: () => {
+    lockRefresh = true
+    ui.setStatus("Refreshing...")
+    refreshConvos(() => {
+      refreshMessages(() => {
+        ui.clearStatus()
+        lockRefresh = false
+      })
+    })
   }
 })
 

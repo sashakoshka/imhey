@@ -33,9 +33,17 @@ program.
 ## Usage
 
 On the left, you can see all of you conversations. On the right, you can see the
-conversation history of the currently selected conversation. You can send a
-message by typing and pressing enter, and you can switch to different
-conversations by pressing up or down.
+conversation history of the currently selected conversation.
+
+### Keybinds
+
+- `enter`: Send message
+- `up`: Switch to chat above
+- `down`: Switch to chat below
+- `ctrl-r`: Force refresh
+- `ctrl-d`: Exit
+
+### Things to be careful of
 
 If you are getting random nonsense on screen while switching between chats,
 let it load the chat first before switching to a new one. This shouldn't happen,
