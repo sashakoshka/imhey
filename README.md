@@ -23,31 +23,22 @@ config file using these steps:
    "PHPSESSID=".
 8. Copy the session ID. Make sure to only copy the numbers and letters starting
    after the = sign and ending before the semicolon.
-
-Next, you need to put it in a config file for imhey to read. Make a new text
-file at `~/.config/imhey/conf.json`, and paste in:
-
-```
-{
-  "phpsessid": "xxxxxxxxxxxxxxxxxxxxxxxxxx"
-}
-```
-
-... And replace `xxxxxxxxxxxxxxxxxxxxxxxxxx` with your session ID.
+9. Create the directory `~/.config/imhey`
 
 Then, navigate to the directory of this repo and run `node index.js`, and it
-should just work.
+should ask for your key. Once you enter it, you should be able to use the
+program. 
 
 ## Usage
 
 On the left, you can see all of you conversations. On the right, you can see the
 conversation history of the currently selected conversation. You can send a
 message by typing and pressing enter, and you can switch to different
-conversations by pressing `Alt-up` or `Alt-down`.
+conversations by pressing up or down.
 
 If you are getting random nonsense on screen while switching between chats,
-make sure to let it load the chat first before switching to a new one. Yes, I am
-completely aware of how janky this is and yes I will fix it but later probably.
+let it load the chat first before switching to a new one. This shouldn't happen,
+but it might until I create a more robust system for storing messages.
 
 There is currently no way to start a new chat from within this client, you have
 to do that on the website.
