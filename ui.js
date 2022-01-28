@@ -8,12 +8,13 @@
 const blessed = require("neo-blessed")
 
 let screen,
-    chatLabel,
     chatListLabel,
     chatList,
+    chatLabel,
+    timerBar,
+    chatHistory,
     inputPrompt,
     inputBox,
-    chatHistory,
     conversations
 
 let evh,
@@ -29,22 +30,6 @@ function init (evh_) {
   screen.title = "SpaceHey Instant Messanger"
 
   conversations = []
-  
-  chatLabel = blessed.box ({
-    top:   0,
-    left:  25,
-    width: "100%-25",
-    height: 1,
-    content: "",
-    padding: {
-      left:  1,
-      right: 1
-    },
-    style: {
-      fg: "black",
-      bg: "red"
-    }
-  })
   
   chatListLabel = blessed.box ({
     top:    0,
@@ -66,6 +51,56 @@ function init (evh_) {
     height: "100%-1",
     scrollable: true,
     style: {
+      bg: "black"
+    }
+  })
+  
+  chatLabel = blessed.box ({
+    top:   0,
+    left:  25,
+    width: "100%-25",
+    height: 1,
+    content: "",
+    padding: {
+      left:  1,
+      right: 1
+    },
+    style: {
+      fg: "black",
+      bg: "red"
+    }
+  })
+  
+  timerBar = blessed.box ({
+    top:   0,
+    left:  -1,
+    width: "100%",
+    height: 1,
+    content: "",
+    padding: {
+      left:  1,
+      right: 1
+    },
+    style: {
+      fg: "black",
+      bg: "blue"
+    }
+  })
+
+  chatHistory = blessed.box ({
+    top: 1,
+    left: 25,
+    width: "100%-25",
+    height: "100%-2",
+    content: "",
+    tags: true,
+    scrollable: true,
+    padding: {
+      left:  1,
+      right: 1
+    },
+    style: {
+      fg: "white",
       bg: "black"
     }
   })
@@ -93,24 +128,6 @@ function init (evh_) {
     },
     keys: true,
     inputOnFocus: true
-  })
-
-  chatHistory = blessed.box ({
-    top: 1,
-    left: 25,
-    width: "100%-25",
-    height: "100%-2",
-    content: "",
-    tags: true,
-    scrollable: true,
-    padding: {
-      left:  1,
-      right: 1
-    },
-    style: {
-      fg: "white",
-      bg: "black"
-    }
   })
   
   inputBox.key (['escape', 'C-d'], (ch, key) => {
@@ -156,14 +173,16 @@ function init (evh_) {
     evh.onrefresh()
   })
   
-  screen.append(chatLabel)
   screen.append(chatListLabel)
   screen.append(chatList)
+  screen.append(chatLabel)
+    chatLabel.append(timerBar)
+  screen.append(chatHistory)
   screen.append(inputPrompt)
   screen.append(inputBox)
-  screen.append(chatHistory)
   
   inputBox.focus()
+  timerBar.hide()
   
   screen.render()
 }
@@ -296,21 +315,27 @@ function forceRefresh () {
   screen.render()
 }
 
-function countDown (count) {
+function countDown (countMax) {
+  let count = countMax
+
   lockInput = true
+  timerBar.show()
+  timerBar.setText(`${count} sec`)
+  
   let countInterval = setInterval (() => {
+    count--
+    
     if (count === 0) {
       clearInterval(countInterval)
-      inputPrompt.setText(" >")
       lockInput = false
+      timerBar.hide()
       screen.render()
       return
     }
 
-    inputPrompt.setText(` ${count}`)
+    timerBar.setText(`${count} sec`)
+    timerBar.width = `${count / countMax * 100}%`
     screen.render()
-    
-    count--
   }, 1000)
 }
 
