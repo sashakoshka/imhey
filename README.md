@@ -23,7 +23,6 @@ config file using these steps:
    "PHPSESSID=".
 8. Copy the session ID. Make sure to only copy the numbers and letters starting
    after the = sign and ending before the semicolon.
-9. Create the directory `~/.config/imhey`
 
 Then, navigate to the directory of this repo and run `node index.js`, and it
 should ask for your key. Once you enter it, you should be able to use the

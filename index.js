@@ -5,24 +5,28 @@ const shim         = require("./shim"),
       readlineSync = require("readline-sync"),
       childProcess = require("child_process")
 
-const confPath = `${os.homedir()}/.config/imhey/conf.json`
+const confDirPath  = `${os.homedir()}/.config/imhey`
+const confFilePath = confDirPath + "/conf.json"
 let conf = {
   beepCmd: "beep"
 }
 
 function loadConf () {
+  if (!fs.existsSync(confDirPath))
+    fs.mkdirSync(confDirPath, { recursive: true })
+
   try {
     conf = {
       ... conf,
-      ... JSON.parse(fs.readFileSync(confPath))
+      ... JSON.parse(fs.readFileSync(confFilePath))
     }
   } catch (err) {
-    console.error("!!! config file malformed")
+    console.error("(i) config file missing or broken, new one will be created")
   }
 }
 
 function saveConf () {
-  fs.writeFileSync(confPath, JSON.stringify(conf))
+  fs.writeFileSync(confFilePath, JSON.stringify(conf))
 }
 
 loadConf()
