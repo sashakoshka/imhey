@@ -2,17 +2,22 @@ const shim         = require("./shim"),
       ui           = require("./ui"),
       fs           = require("fs"),
       os           = require("os"),
-      readlineSync = require("readline-sync")
+      readlineSync = require("readline-sync"),
+      childProcess = require("child_process")
 
 const confPath = `${os.homedir()}/.config/imhey/conf.json`
-let conf = {}
+let conf = {
+  beepCmd: "beep"
+}
 
 function loadConf () {
   try {
-    conf = JSON.parse(fs.readFileSync(confPath))
+    conf = {
+      ... conf,
+      ... JSON.parse(fs.readFileSync(confPath))
+    }
   } catch (err) {
     console.error("!!! config file malformed")
-    conf = {}
   }
 }
 
@@ -81,10 +86,21 @@ function error (err) {
   ui.forceRefresh()
 }
 
+function beep () {
+  childProcess.spawn(conf.beepCmd ?? "beep")
+}
+
 function refreshConvos (callback) {
+  let newMessages = false
+
   shim.getConversations ((data) => {
     conversations = data.data.conversations
     selection = ui.setConversations(conversations)
+    for (conv in conversations) {
+      if (conv.unread_count > 0) newMessages = true
+    }
+    // doesnt work??
+    if (newMessages) beep()
     callback()
   }, (err) => {
     callback()
@@ -94,6 +110,7 @@ function refreshConvos (callback) {
 
 function refreshMessages (callback) {
   shim.getMessages (conversations[selection].user.id, (data) => {
+    ui.clearMessages()
     for (const message of data.data.messages) {
       ui.addMessage (
         conversations[selection].user.display_name,

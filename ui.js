@@ -282,6 +282,10 @@ function addMessage (user, content, self, time, seen) {
   chatHistory.scrollTo(chatHistory.getScrollHeight())
 }
 
+function clearMessages () {
+  chatHistory.setContent("")
+}
+
 function forceRefresh () {
   screen.render()
 }
@@ -293,5 +297,6 @@ module.exports = {
   setStatus,
   clearStatus,
   addMessage,
+  clearMessages,
   forceRefresh
 }
