@@ -1,20 +1,43 @@
-const shim    = require("./shim"),
-      ui      = require("./ui"),
-      fs      = require("fs"),
-      os      = require("os")
+const shim         = require("./shim"),
+      ui           = require("./ui"),
+      fs           = require("fs"),
+      os           = require("os"),
+      readlineSync = require("readline-sync")
 
 const confPath = `${os.homedir()}/.config/imhey/conf.json`
 let conf = {}
 
 function loadConf () {
-  conf = JSON.parse(fs.readFileSync(confPath))
+  try {
+    conf = JSON.parse(fs.readFileSync(confPath))
+  } catch (err) {
+    console.error("!!! config file malformed")
+    conf = {}
+  }
 }
 
 function saveConf () {
-  conf = fs.writeFileSync(confPath, JSON.stringify(conf))
+  fs.writeFileSync(confPath, JSON.stringify(conf))
 }
 
 loadConf()
+
+if (!shim.verifySessionID(conf.phpsessid)) {
+  console.error (
+    "ERR session id not set, or invalid. please get your session id by",
+    "following the instructions in README.md (in ## Setup)"
+  )
+}
+
+while (!shim.verifySessionID(conf.phpsessid)) {
+  conf.phpsessid = readlineSync.question("[?] please input your session id: ")
+  if (shim.verifySessionID(conf.phpsessid)) {
+    saveConf()
+    break
+  }
+  console.error("ERR id is invalid, try again")
+}
+
 shim.setSessionID(conf.phpsessid)
 
 let selection = 0

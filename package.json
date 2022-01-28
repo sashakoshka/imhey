@@ -9,9 +9,9 @@
   "author": "Sasha Koshka",
   "license": "ISC",
   "dependencies": {
-    "neo-blessed": "^0.2.0"
+    "neo-blessed": "^0.2.0",
+    "readline-sync": "^1.4.10"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sashakoshka/imhey.git"

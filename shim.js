@@ -13,6 +13,10 @@ function setSessionID (id) {
   sessionID = id
 }
 
+function verifySessionID (id) {
+  return id && id.length === 26 // this number is subject to change in da future
+}
+
 function apiReq (params = {}, dataCallback, errorCallback) {
   if (!sessionID) errorCallback(new Error("session id hasn't been set yet"))
 
@@ -100,6 +104,7 @@ function sendMessage (user, content, dataCallback, errorCallback) {
 
 module.exports = {
   setSessionID,
+  verifySessionID,
   apiReq,
   getConversations,
   getMessages,
