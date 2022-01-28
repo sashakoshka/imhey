@@ -84,7 +84,7 @@ function error (err) {
 function refreshConvos (callback) {
   shim.getConversations ((data) => {
     conversations = data.data.conversations
-    ui.setConversations(conversations)
+    selection = ui.setConversations(conversations)
     callback()
   }, (err) => {
     callback()

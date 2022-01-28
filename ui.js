@@ -200,6 +200,11 @@ function selectConversation (number) {
 }
 
 function setConversations (list) {
+  // if there is a currently selected convo, we need to search the new list for
+  // the id to select the correct one.
+  let selectedID = conversations[selection]?.id ?? false
+  selection      = selectedID === false ? 0 : undefined
+
   for (const conv of conversations) {
     conv.widget.detach()
   }
@@ -207,6 +212,9 @@ function setConversations (list) {
   conversations = []
 
   for (let i = 0; i < list.length; i++) {
+    // if this matches our selection, set the numeric selection to it.
+    if (list[i].id === selectedID) selection = i
+    
     let convData = list[i]
     let conv = blessed.box ({
       left:    0,
@@ -233,12 +241,15 @@ function setConversations (list) {
 
     chatList.append(conv)
     conversations.push ({
-      name: list[i].user.display_name,
-      widget: conv
+      name:   list[i].user.display_name,
+      widget: conv,
+      id:     list[i].id // where possible, we use convo id to refer to convo
     })
   }
 
   screen.render()
+
+  return selection
 }
 
 function setStatus (status) {
