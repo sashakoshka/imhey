@@ -10,6 +10,7 @@ const shim         = require("./shim"),
 const confDirPath  = `${os.homedir()}/.config/imhey`
 const confFilePath = confDirPath + "/conf.json"
 let conf = {
+  notifyCmd: "notify-send",
   beepCmd: "beep"
 }
 
@@ -68,7 +69,7 @@ ui.init ({
   onrefresh: () => {
     lockRefresh = true
     let status = ui.addStatus("Refreshing...")
-    refreshConvos(() => {
+    refreshChats(() => {
       refreshMessages(() => {
         ui.delStatus(status)
         lockRefresh = false
@@ -77,27 +78,7 @@ ui.init ({
   }
 })
 
-let conversations = []
-/*  {
-    id: 324922,
-    last_message_time: 1643304503,
-    unread_count: 0,
-    user: {
-      id: 1139200,
-      display_name: "hobo13"
-    }
-  },
-  {
-    id: 331180,
-    last_message_time: 1643299540,
-    unread_count: 0,
-    user: {
-      id: 1152894,
-      display_name: "clown"
-    }
-  }
-]*/
-
+let chats = []
 let lockRefresh = false
 
 function error (err) {
@@ -105,34 +86,38 @@ function error (err) {
   ui.forceRefresh()
 }
 
-function beep () {
-  childProcess.spawn(conf.beepCmd ?? "beep")
+function notify (message) {
+  if (conf.notifyCmd) childProcess.spawn(conf.notifyCmd, [message])
 }
 
-function refreshConvos (callback) {
-  //let newMessages = false
-  
-  // if there is a currently selected convo, we need to search the new list
+function beep () {
+  if (conf.beepCmd) childProcess.spawn(conf.beepCmd)
+}
+
+function refreshChats (callback) {
+  // if there is a currently selected chat, we need to search the new list
   // for the id to select the correct one.
-  let selectedID = conversations[selection]?.id ?? false
+  let selectedID = chats[selection]?.id ?? false
   selection      = selectedID === false ? 0 : undefined
 
-  shim.getConversations ((data) => {
-    conversations = data.data.conversations
+  shim.getChats ((data) => {
+    let newMessages = false
+  
+    chats = data.data.conversations
 
-    for (let i = 0; i < conversations.length; i++) {
+    for (let i = 0; i < chats.length; i++) {
       // check if there are any new messages
-      //if (conversations[i].unread_count > 0) newMessages = true
+      if (chats[i].unread_count > 0) {
+        notify(`(${chats[i].unread_count}) from ${chats[i].user.display_name}`)
+        newMessages = true
+      }
       
       // if this matches our selection, set the numeric selection to it.
-      if (conversations[i].id === selectedID) selection = i
+      if (chats[i].id === selectedID) selection = i
     }
     
-    // doesnt work??
-    //if (newMessages) beep()
-    
-    ui.setConversations(conversations, selection)
-    
+    if (newMessages) beep()
+    ui.setChats(chats, selection)
     callback()
   }, (err) => {
     callback()
@@ -141,10 +126,10 @@ function refreshConvos (callback) {
 }
 
 function refreshMessages (callback, clear) {
-  shim.getMessages (conversations[selection].user.id, (data) => {
+  shim.getMessages (chats[selection].user.id, (data) => {
     for (const message of data.data.messages) {
       ui.addMessage (
-        conversations[selection].user.display_name,
+        chats[selection].user.display_name,
         message.content,
         message.self,
         message.time,
@@ -163,7 +148,7 @@ function refreshMessages (callback, clear) {
 function send (content) {
   let status = ui.addStatus("Sending...")
   shim.sendMessage (
-    conversations[selection].user.id, content,
+    chats[selection].user.id, content,
     () => {
       refreshMessages(() => {
         ui.delStatus(status)
@@ -174,8 +159,8 @@ function send (content) {
 
 /* initial refresh */ {
   let status = ui.addStatus("Loading...")
-  refreshConvos (() => {
-    ui.selectConversation(0)
+  refreshChats (() => {
+    ui.selectChat(0)
     ui.delStatus(status)
   })
 }
@@ -183,7 +168,7 @@ function send (content) {
 let autoRefresh = setInterval (() => {
   if (lockRefresh) return
   let status = ui.addStatus("Refreshing...")
-  refreshConvos(() => {
+  refreshChats(() => {
     refreshMessages(() => {
       ui.delStatus(status)
     })

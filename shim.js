@@ -106,7 +106,7 @@ module.exports = {
   setSessionID,
   verifySessionID,
   apiReq,
-  getConversations,
+  getChats: getConversations,
   getMessages,
   sendMessage
 }

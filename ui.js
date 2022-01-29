@@ -338,8 +338,8 @@ function countDown (countMax) {
 
 module.exports = {
   init,
-  setConversations,
-  selectConversation,
+  setChats: setConversations,
+  selectChat: selectConversation,
   addStatus,
   delStatus,
   addMessage,
