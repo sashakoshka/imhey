@@ -228,11 +228,8 @@ function selectConversation (number) {
   screen.render()
 }
 
-function setConversations (list) {
-  // if there is a currently selected convo, we need to search the new list for
-  // the id to select the correct one.
-  let selectedID = conversations[selection]?.id ?? false
-  selection      = selectedID === false ? 0 : undefined
+function setConversations (list, newSelection) {
+  selection = newSelection
 
   for (const conv of conversations) {
     conv.widget.detach()
@@ -241,9 +238,6 @@ function setConversations (list) {
   conversations = []
 
   for (let i = 0; i < list.length; i++) {
-    // if this matches our selection, set the numeric selection to it.
-    if (list[i].id === selectedID) selection = i
-    
     let convData = list[i]
     let conv = blessed.box ({
       left:    0,
@@ -277,25 +271,43 @@ function setConversations (list) {
   }
 
   screen.render()
-
-  return selection
 }
 
-function setStatus (status) {
-  chatListLabel.setText(status)
-  chatListLabel.style = {
-    fg: "black",
-    bg: "blue",
+let statuses = {}
+let statusCount = 0
+
+function updateStatus () {
+  if (Object.keys(statuses).length > 0) {
+    // if there are statuses in the list, display the most recent one
+    let key = Object.keys(statuses).reduce (
+      (a, b) => statuses[a] > statuses[b] ? a : b
+    )
+    chatListLabel.setText(statuses[key])
+    chatListLabel.style = {
+      fg: "black",
+      bg: "blue",
+    }
+  } else {
+    // if there are none, reset the text back to normal
+    chatListLabel.setText("Conversations")
+    chatListLabel.style = {
+      fg: "black",
+      bg: "red",
+    }
   }
+  
   screen.render()
 }
 
-function clearStatus (status) {
-  chatListLabel.setText("Conversations")
-  chatListLabel.style = {
-    fg: "black",
-    bg: "red",
-  }
+function addStatus (status) {
+  statuses[statusCount] = status
+  updateStatus()
+  return statusCount ++
+}
+
+function delStatus (statusKey) {
+  if (statuses.hasOwnProperty(statusKey)) delete statuses[statusKey]
+  updateStatus()
   screen.render()
 }
 
@@ -343,8 +355,8 @@ module.exports = {
   init,
   setConversations,
   selectConversation,
-  setStatus,
-  clearStatus,
+  addStatus,
+  delStatus,
   addMessage,
   forceRefresh,
   countDown

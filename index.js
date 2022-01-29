@@ -50,23 +50,25 @@ while (!shim.verifySessionID(conf.phpsessid)) {
 shim.setSessionID(conf.phpsessid)
 
 let selection = 0
+
 ui.init ({
   onselect: (item) => {
     selection = item
-    ui.setStatus("Loading...")
-    refreshMessages(ui.clearStatus, true)
+    status = ui.addStatus("Loading...")
+    refreshMessages (() => {
+      ui.delStatus(status)
+    }, true)
   },
   onsubmit: (message) => {
-    ui.setStatus("Sending...")
     send(message)
     ui.countDown(20)
   },
   onrefresh: () => {
     lockRefresh = true
-    ui.setStatus("Refreshing...")
+    status = ui.addStatus("Refreshing...")
     refreshConvos(() => {
       refreshMessages(() => {
-        ui.clearStatus()
+        ui.delStatus(status)
         lockRefresh = false
       })
     })
@@ -97,7 +99,7 @@ let conversations = []
 let lockRefresh = false
 
 function error (err) {
-  ui.addMessage("API ERROR", err)
+  ui.addMessage("API ERR", err)
   ui.forceRefresh()
 }
 
@@ -106,16 +108,29 @@ function beep () {
 }
 
 function refreshConvos (callback) {
-  let newMessages = false
+  //let newMessages = false
+  
+  // if there is a currently selected convo, we need to search the new list
+  // for the id to select the correct one.
+  let selectedID = conversations[selection]?.id ?? false
+  selection      = selectedID === false ? 0 : undefined
 
   shim.getConversations ((data) => {
     conversations = data.data.conversations
-    selection = ui.setConversations(conversations)
-    for (conv in conversations) {
-      if (conv.unread_count > 0) newMessages = true
+
+    for (let i = 0; i < conversations.length; i++) {
+      // check if there are any new messages
+      //if (conversations[i].unread_count > 0) newMessages = true
+      
+      // if this matches our selection, set the numeric selection to it.
+      if (conversations[i].id === selectedID) selection = i
     }
+    
     // doesnt work??
-    if (newMessages) beep()
+    //if (newMessages) beep()
+    
+    ui.setConversations(conversations, selection)
+    
     callback()
   }, (err) => {
     callback()
@@ -144,23 +159,32 @@ function refreshMessages (callback, clear) {
 }
 
 function send (content) {
-  ui.setStatus("Sending...")
+  let status = ui.addStatus("Sending...")
   shim.sendMessage (
     conversations[selection].user.id, content,
-    () => {refreshMessages(ui.clearStatus)}
+    () => {
+      refreshMessages(() => {
+        ui.delStatus(status)
+      })
+    }
   )
 }
 
-ui.setStatus("Loading...")
-refreshConvos (() => {
-  ui.selectConversation(0)
-})
+/* initial refresh */ {
+  let status = ui.addStatus("Loading...")
+  refreshConvos (() => {
+    ui.selectConversation(0)
+    ui.delStatus(status)
+  })
+}
 
 let autoRefresh = setInterval (() => {
   if (lockRefresh) return
-  ui.setStatus("Refreshing...")
+  let status = ui.addStatus("Refreshing...")
   refreshConvos(() => {
-    refreshMessages(ui.clearStatus)
+    refreshMessages(() => {
+      ui.delStatus(status)
+    })
   })
 }, 30000)
 
