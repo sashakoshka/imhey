@@ -1,3 +1,5 @@
+"use strict"
+
 const shim         = require("./shim"),
       ui           = require("./ui"),
       fs           = require("fs"),
@@ -54,7 +56,7 @@ let selection = 0
 ui.init ({
   onselect: (item) => {
     selection = item
-    status = ui.addStatus("Loading...")
+    let status = ui.addStatus("Loading...")
     refreshMessages (() => {
       ui.delStatus(status)
     }, true)
@@ -65,7 +67,7 @@ ui.init ({
   },
   onrefresh: () => {
     lockRefresh = true
-    status = ui.addStatus("Refreshing...")
+    let status = ui.addStatus("Refreshing...")
     refreshConvos(() => {
       refreshMessages(() => {
         ui.delStatus(status)

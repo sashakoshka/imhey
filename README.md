@@ -11,8 +11,7 @@ well. It is just a proof of concept for now.
 
 ## Setup
 
-In order for it to work, you need to find your session ID, and put it in the
-config file using these steps:
+In order for it to work, you need to find your session ID using these steps:
 
 1. Log into spacehey
 2. Open up the F12 menu

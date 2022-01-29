@@ -300,13 +300,17 @@ function updateStatus () {
 }
 
 function addStatus (status) {
-  statuses[statusCount] = status
+  let statusKey = statusCount ++
+  statuses[statusKey] = status
   updateStatus()
-  return statusCount ++
+  return statusKey
 }
 
 function delStatus (statusKey) {
-  if (statuses.hasOwnProperty(statusKey)) delete statuses[statusKey]
+  if (statuses.hasOwnProperty(statusKey))
+    delete statuses[statusKey]
+  else
+    throw new Error(`undefined status key ${statusKey}`)
   updateStatus()
   screen.render()
 }
