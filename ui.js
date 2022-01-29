@@ -21,6 +21,28 @@ let evh,
     selection,
     lockInput
 
+let styles = {
+  bg: {
+    fg: "white",
+    bg: "black"
+  },
+  select: {
+    fg: "white",
+    bg: "grey"
+  },
+  bar: {
+    fg: "black",
+    bg: "red"
+  },
+  action: {
+    fg: "black",
+    bg: "blue"
+  },
+  username: {
+    fg: "red"
+  }
+}
+
 function init (evh_) {
   evh = evh_
   selection = 0
@@ -38,10 +60,7 @@ function init (evh_) {
     height: 1,
     align:  "center",
     content: "Conversations",
-    style: {
-      fg: "black",
-      bg: "red"
-    }
+    style: styles.bar
   })
 
   chatList = blessed.box ({
@@ -50,9 +69,7 @@ function init (evh_) {
     width: 24,
     height: "100%-1",
     scrollable: true,
-    style: {
-      bg: "black"
-    }
+    style: styles.bg
   })
   
   chatLabel = blessed.box ({
@@ -65,10 +82,7 @@ function init (evh_) {
       left:  1,
       right: 1
     },
-    style: {
-      fg: "black",
-      bg: "red"
-    }
+    style: styles.bar
   })
   
   timerBar = blessed.box ({
@@ -81,10 +95,7 @@ function init (evh_) {
       left:  1,
       right: 1
     },
-    style: {
-      fg: "black",
-      bg: "blue"
-    }
+    style: styles.action
   })
 
   chatHistory = blessed.box ({
@@ -99,10 +110,7 @@ function init (evh_) {
       left:  1,
       right: 1
     },
-    style: {
-      fg: "white",
-      bg: "black"
-    }
+    style: styles.bg
   })
   
   inputPrompt = blessed.box ({
@@ -110,10 +118,7 @@ function init (evh_) {
     left:   25,
     width:  3,
     height: 1,
-    style: {
-      fg: "white",
-      bg: "black"
-    },
+    style: styles.bg,
     content: " >"
   })
   
@@ -122,10 +127,7 @@ function init (evh_) {
     left:   28,
     width: "100%-28",
     height: 1,
-    style: {
-      fg: "white",
-      bg: "black"
-    },
+    style: styles.bg,
     keys: true,
     inputOnFocus: true
   })
@@ -202,22 +204,14 @@ function selectPrev () {
 function selectConversation (number) {
   if (conversations.length === 0) return
 
-  conversations[selection].widget.style = {
-    fg: "white",
-    bg: "black"
-  }
-
+  conversations[selection].widget.style = styles.bg
   conversations[selection].widget.setText(conversations[selection].name)
 
   selection = number
   
   if (selection < 0 || selection > conversations.length) selection = 0
   
-  conversations[selection].widget.style = {
-    fg: "white",
-    bg: "grey"
-  }
-
+  conversations[selection].widget.style = styles.select
   conversations[selection].widget.setText("> " + conversations[selection].name)
 
   chatLabel.setText(`User ${conversations[selection].name}`)
@@ -251,15 +245,7 @@ function setConversations (list, newSelection) {
         left:  1,
         right: 1
       },
-      style: (
-        (i === selection) ? {
-          fg: "white",
-          bg: "grey"
-        } : {
-          fg: "white",
-          bg: "black"
-        }
-      )
+      style: ((i === selection) ? styles.select : styles.bg)
     })
 
     chatList.append(conv)
@@ -283,17 +269,11 @@ function updateStatus () {
       (a, b) => statuses[a] > statuses[b] ? a : b
     )
     chatListLabel.setText(statuses[key])
-    chatListLabel.style = {
-      fg: "black",
-      bg: "blue",
-    }
+    chatListLabel.style = styles.action
   } else {
     // if there are none, reset the text back to normal
     chatListLabel.setText("Conversations")
-    chatListLabel.style = {
-      fg: "black",
-      bg: "red",
-    }
+    chatListLabel.style = styles.bar
   }
   
   screen.render()
@@ -318,7 +298,8 @@ function delStatus (statusKey) {
 function addMessage (user, content, self, time, seen, clear) {
   if (self) user = "you"
   
-  let text = `{red-fg}[${user}]:{/} ${content.replace(/<br>/g, '\n    ')}`
+  let text = `{${styles.username.fg}-fg}[${user}]:{/} `
+           + `${content.replace(/<br>/g, '\n    ')}`
   if (chatHistory.getText() === "" || clear)
     chatHistory.setContent(text)
   else
