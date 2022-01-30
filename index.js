@@ -78,8 +78,9 @@ ui.init ({
   }
 })
 
-let chats = []
-let lockRefresh = false
+let chats         = []
+let chatHistories = {}
+let lockRefresh   = false
 
 function error (err) {
   ui.addMessage("API ERR", err)
@@ -125,24 +126,49 @@ function refreshChats (callback) {
   })
 }
 
-function refreshMessages (callback, clear) {
-  shim.getMessages (chats[selection].user.id, (data) => {
+function refreshMessages (callback) {
+  let chatID = chats[selection].id
+  
+  if (!chatHistories[chatID]) chatHistories[chatID] = {
+    messages: [],
+    lastTime: 0
+  }
+
+  let lastTime = chatHistories[chatID].lastTime
+  chatHistories[chatID].lastTime = Math.floor(Date.now() / 1000)
+  
+  shim.getMessages (chats[selection].user.id, lastTime, (data) => {
     for (const message of data.data.messages) {
-      ui.addMessage (
-        chats[selection].user.display_name,
-        message.content,
-        message.self,
-        message.time,
-        message.seen,
-        clear
-      )
-      clear = false
+      chatHistories[chatID].messages.push(message)
     }
+
+    refreshMessageDisplay()
     callback()
   }, (err) => {
+    chatHistories[chatID].lastTime = lastTime
     callback()
     error(err?.toString() ?? "unknown")
   })
+}
+
+function currentChatHistory () {
+  return chatHistories[chats[selection].id]
+}
+
+function refreshMessageDisplay () {
+  // TODO: only clear on chat switch
+  let clear = true
+  for (const message of currentChatHistory().messages) {
+    ui.addMessage (
+      chats[selection].user.display_name,
+      message.content,
+      message.self,
+      message.time,
+      message.seen,
+      clear
+    )
+    clear = false
+  }
 }
 
 function send (content) {

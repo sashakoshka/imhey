@@ -76,20 +76,14 @@ function getConversations (dataCallback, errorCallback) {
   }, dataCallback, errorCallback)
 }
 
-let lastTime = 0
-let lastUser = ""
-
-function getMessages (user, dataCallback, errorCallback) {
-  if (user !== lastUser) lastTime = 0
-
+function getMessages (user, lastTime, dataCallback, errorCallback) {
   apiReq ({
     action:    "get_messages",
     user:      user,
     last_time: lastTime
   }, dataCallback, errorCallback)
 
-  lastTime = Math.floor(Date.now() / 1000)
-  lastUser = user
+  //lastTime = Math.floor(Date.now() / 1000)
 }
 
 function sendMessage (user, content, dataCallback, errorCallback) {
@@ -98,8 +92,6 @@ function sendMessage (user, content, dataCallback, errorCallback) {
     user:    user,
     content: content
   }, dataCallback, errorCallback)
-
-  lastTime = Math.floor(Date.now() / 1000)
 }
 
 module.exports = {

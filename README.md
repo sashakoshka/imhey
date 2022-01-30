@@ -42,16 +42,12 @@ conversation history of the currently selected conversation.
 - `ctrl-r`: Force refresh
 - `ctrl-d`: Exit
 
-### Things to be careful of
-
-If you are getting random nonsense on screen while switching between chats,
-let it load the chat first before switching to a new one. This shouldn't happen,
-but it might until I create a more robust system for storing messages.
+### Missing (for now) Features
 
 There is currently no way to start a new chat from within this client, you have
 to do that on the website.
 
-## Planned features
+## Planned Features
 
 In the future, this will be optimized to be more efficient than the official
 client. This will be done by caching messages from all chats to disk, and only
