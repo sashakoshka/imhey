@@ -4,9 +4,11 @@
 
 SpaceHey has a very wierd "instant messanger" built into it. I got really
 curious and decided to figure out how it worked. Long story short I reverse
-engineered the api a bit, and made an alternative client.
+engineered the api a bit, and made this alternative client in NodeJS using
+the neo-blessed interface library.
 
-Please be aware that this is experimental, and you may run into issues.
+Please be aware that this is experimental, and there are bugs. Mainly because I
+almost exclusively work on this half asleep.
 
 ## Setup
 
@@ -26,7 +28,9 @@ In order for it to work, you need to find your session ID using these steps:
 
 Then, navigate to the directory of this repo and run `node index.js`, and it
 should ask for your key. Once you enter it, you should be able to use the
-program. 
+program.
+
+I may experiment with username/password login in the future
 
 ## Usage
 
@@ -41,10 +45,16 @@ conversation history of the currently selected conversation.
 - `ctrl-r`: Force refresh
 - `ctrl-d`: Exit
 
-### Missing (For Now) Features
+## Current Features
 
-There is currently no way to start a new chat from within this client, you have
-to do that on the website.
+- Switch between chats
+- Send and recieve messages
+- Animated cooldown timer (SpaceHey site doesn't even have this ;))
+- Force refresh
+- Can have quicker loading times than the official version (also causes slightly
+  less server load!)
+- Will run anywhere theres node and a terminal - you don't even need a graphical
+  desktop installed to use it
 
 ## Planned Features
 
