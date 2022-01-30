@@ -156,8 +156,8 @@ function currentChatHistory () {
 }
 
 function refreshMessageDisplay (clear) {
-  // TODO: lazy load message history somehow so we dont throw a zillion lines of
-  // text on ever time
+  // TODO: only clear messages when we need to
+  clear = true
   for (const message of currentChatHistory().messages) {
     ui.addMessage (
       chats[selection].user.display_name,

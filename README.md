@@ -66,3 +66,4 @@ conversation history of the currently selected conversation.
 - Caching message history to disk
 - Adding new chats from friends list
 - View basic user profile info
+- Integrated configuration manager
