@@ -58,10 +58,11 @@ conversation history of the currently selected conversation.
 
 ## Planned Features
 
-In the future, this will be optimized to be more efficient than the official
-client. This will be done by caching messages from all chats to disk, and only
-loading the ones it needs to. That way whenever you switch chats it won't have
-to load the entire chat history from the server.
-
-I will also probably add a new chat feature, and probably fix the ridiculous
-amount of bugs.
+- Less bugs of course
+- Block and report buttons
+- Proper html special chars parsing
+- Multiline text editing
+- Url image embeds (on terminals such as kitty)
+- Caching message history to disk
+- Adding new chats from friends list
+- View basic user profile info
