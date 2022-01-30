@@ -126,7 +126,7 @@ function refreshChats (callback) {
   })
 }
 
-function refreshMessages (callback) {
+function refreshMessages (callback, clear) {
   let chatID = chats[selection].id
   
   if (!chatHistories[chatID]) chatHistories[chatID] = {
@@ -142,7 +142,7 @@ function refreshMessages (callback) {
       chatHistories[chatID].messages.push(message)
     }
 
-    refreshMessageDisplay()
+    refreshMessageDisplay(clear)
     callback()
   }, (err) => {
     chatHistories[chatID].lastTime = lastTime
@@ -155,9 +155,9 @@ function currentChatHistory () {
   return chatHistories[chats[selection].id]
 }
 
-function refreshMessageDisplay () {
-  // TODO: only clear on chat switch
-  let clear = true
+function refreshMessageDisplay (clear) {
+  // TODO: lazy load message history somehow so we dont throw a zillion lines of
+  // text on ever time
   for (const message of currentChatHistory().messages) {
     ui.addMessage (
       chats[selection].user.display_name,

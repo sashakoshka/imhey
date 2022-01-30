@@ -6,8 +6,7 @@ SpaceHey has a very wierd "instant messanger" built into it. I got really
 curious and decided to figure out how it worked. Long story short I reverse
 engineered the api a bit, and made an alternative client.
 
-Please be aware that this is VERY UNSTABLE and does not handle edge cases very
-well. It is just a proof of concept for now.
+Please be aware that this is experimental, and you may run into issues.
 
 ## Setup
 
@@ -42,7 +41,7 @@ conversation history of the currently selected conversation.
 - `ctrl-r`: Force refresh
 - `ctrl-d`: Exit
 
-### Missing (for now) Features
+### Missing (For Now) Features
 
 There is currently no way to start a new chat from within this client, you have
 to do that on the website.
