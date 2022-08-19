@@ -299,7 +299,7 @@ function addMessage (user, content, self, time, seen, clear) {
   if (self) user = "you"
   
   let text = `{${styles.username.fg}-fg}[${user}]:{/} `
-           + `${content.replace(/<br>/g, '\n    ')}`
+           + `${decodeEntities(content.replace(/<br>/g, '\n    '))}`
   if (chatHistory.getText() === "" || clear)
     chatHistory.setContent(text)
   else
@@ -334,6 +334,23 @@ function countDown (countMax) {
     timerBar.width = `${count / countMax * 100}%`
     screen.render()
   }, 1000)
+}
+
+function decodeEntities (encodedString) {
+  var translate_re = /&(nbsp|amp|quot|lt|gt);/g
+  var translate = {
+    "nbsp":" ",
+    "amp" : "&",
+    "quot": "\"",
+    "lt"  : "<",
+    "gt"  : ">"
+  }
+  return encodedString.replace (translate_re, function (match, entity) {
+    return translate[entity]
+  }).replace(/&#(\d+);/gi, function (match, numStr) {
+    var num = parseInt(numStr, 10)
+    return String.fromCharCode(num)
+  })
 }
 
 module.exports = {
