@@ -47,7 +47,7 @@ function init (evh_) {
   evh = evh_
   selection = 0
 
-  screen = blessed.screen();
+  screen = blessed.screen()
   
   screen.title = "SpaceHey Instant Messanger"
 

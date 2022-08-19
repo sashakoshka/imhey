@@ -64,7 +64,7 @@ ui.init ({
   },
   onsubmit: (message) => {
     send(message)
-    ui.countDown(20)
+    ui.countDown(10)
   },
   onrefresh: () => {
     lockRefresh = true
@@ -199,5 +199,5 @@ let autoRefresh = setInterval (() => {
       ui.delStatus(status)
     })
   })
-}, 30000)
+}, 10000)
 
