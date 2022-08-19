@@ -60,7 +60,6 @@ conversation history of the currently selected conversation.
 
 - Less bugs of course
 - Block and report buttons
-- Proper html special chars parsing
 - Multiline text editing
 - Url image embeds (on terminals such as kitty)
 - Caching message history to disk
