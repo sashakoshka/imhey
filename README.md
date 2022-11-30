@@ -1,3 +1,5 @@
+!!! NOTE: Due to the recent update to spacehey's IM feature, this probably does not work anymore. The API is completely different and significantly more complicated. !!!
+
 # imhey
 
 ![imhey screenshot](preview.png)
